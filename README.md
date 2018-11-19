@@ -1,6 +1,9 @@
 # DFA_Equivalence
 
-Test input files:
+Test file structure:
+********
+
+Test inputs:
   DFA_numTest_1
   DFA_numTest_2
   Equivalence(Yes/No)
