@@ -13,11 +13,20 @@ class DFA
 
 class union
 	def __init__ (self, dfa_1, dfa_2)
-		var length_1 = len(dfa_1)
-		var length_2 = len(dfa_2)
+		self.length_1 = len(dfa_1)
+		self.length_2 = len(dfa_2)
 		self.union_table = [[0 for x in range(length_2)] for y in range(length_1)]
-		for i in range(length_2):
-			for j in range(length_1):
-				self.union_table[i][j] = -1
+		for row in range(length_2):
+			for col in range(length_1):
+				if (not dfa_1[col].state.accepting) and (not dfa_2[row].state.accepting):
+					self.union_table[row][col] = -1
+				else:
+					self.union_table[row][col] = 1
 
-	
+def  union_main(dfa_1, dfa_2)
+	table = union(dfa_1, dfa_2)
+	for y in range(table.length_1):
+		for x in range(table.length_2):
+			table.union_table[x][y] = table.union_table[dfa_2[x].zero_tr][dfa_1[y].state.zero_tr]
+			table.union_table[x][y] = table.union_table[dfa_2[x].one_tr][dfa_1[y].state.one_tr]
+
