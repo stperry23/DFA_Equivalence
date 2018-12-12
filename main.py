@@ -10,8 +10,42 @@ Report:
 '''
 import sys
 
-def lazy_exclusive(dfa_a, dfa_b, acceptStates_a, acceptStates_b):
-    pass
+def lazy_exclusive(numsStates_a, numTrans_a, acceptStates_a, dfa_a, numsStates_b, numTrans_b, acceptStates_b, dfa_b):
+    equal = 0
+    states = [[0,0]]
+    current = 0
+    while(len(states) > 0 ):
+        if(accept_check(states[current][0],states[current][1], acceptStates_a, acceptStates_b) == False):
+            equal = 1
+        for i in range(numTrans_a):
+            state = [dfa_a[states[current][0]][i],dfa_b[states[current][1]][i]]
+            if(state not in states):
+                new_states.append(state)
+            states.append(state)
+            print(states)
+        new_states.pop(0)
+        for i in range(numTrans_a-1):
+            if(accept_check(states[current][0],states[current][1], acceptStates_a, acceptStates_b) == False):
+                equal = 1
+
+
+    if(equal == 0):
+        print("EQUIVALIANT")
+    if(equal == 1):
+        print("NOT EQUIVALIANT!!")
+
+
+
+
+
+def accept_check(state_a, state_b, acceptStates_b, acceptStates_a):
+    if(state_a in acceptStates_a and state_b in acceptStates_b):
+        return True
+    if(state_a not in acceptStates_a and state_b not in acceptStates_b):
+        return True
+    return False
+
+
 
 def union_find(dfa_a, dfa_b):
     pass
@@ -39,7 +73,7 @@ def main():
     numsStates_a, numTrans_a, acceptStates_a, dfa_a = dfa_parser(DFA_A)
     numsStates_b, numTrans_b, acceptStates_b, dfa_b = dfa_parser(DFA_B)
 
-    lazy_exclusive(dfa_a, dfa_b, acceptStates_a, acceptStates_b)
+    lazy_exclusive(numsStates_a, numTrans_a, acceptStates_a, dfa_a, numsStates_b, numTrans_b, acceptStates_b, dfa_b)
 
 
 main()
