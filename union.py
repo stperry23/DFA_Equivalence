@@ -1,4 +1,5 @@
 import sys
+import time
 
 class state:
     def __init__(self, _accepting, _zero_tr, _one_tr):
@@ -12,18 +13,18 @@ class DFA:
         lines = file.read().splitlines()
         for i in range(len(lines)):
             lines[i] = list(map(int, lines[i].split()))
-            
+
         states = lines[1:]
         self.numStates = lines[0][0]
         self.numTrans = lines[0][1]
         acceptStates = lines[0][2:]
         self.delta = []
-        
+
         for i in range(self.numStates):
             current = state((i in acceptStates), states[i][0], states[i][1])
             self.insert_state(current)
 
-	    
+
     def insert_state(self, state):
 	self.delta.append(state)
 
@@ -34,7 +35,7 @@ class UNION_FIND:
         for i in range(len(self.dfa_other.delta)):
             self.dfa_other.delta[i].one_tr += self.dfa_main.numStates
             self.dfa_other.delta[i].zero_tr += self.dfa_main.numStates
-        
+
         self.other_start = self.dfa_main.numStates # will be index representing start of tacked on dfa
         for i in range(self.dfa_other.numStates):
             self.dfa_main.insert_state(self.dfa_other.delta[i])
@@ -42,8 +43,8 @@ class UNION_FIND:
         self.collection = [-1 for x in range(self.dfa_main.numStates)]
         self.List = []
         self.List.append([0, self.other_start])
-                 
-        
+
+
     # A utility function to find the subset of an element i
     def find_parent(self, i):
         if self.collection[i] == -1:
@@ -55,7 +56,10 @@ class UNION_FIND:
             return i
         else:
             self.collection[i] = self.find_parent_compress(self.collection[i])
+<<<<<<< HEAD
      
+=======
+>>>>>>> 7bf374cbf40722d8a099d305e7bf00a5a7b2452d
 
     def union(self,x,y):
         print "x: ", x, " y: ", y
@@ -68,12 +72,12 @@ class UNION_FIND:
             if (self.collection[x] == self.collection[y]):
                 self.collection[x] -= 1
             self.collection[y] = x
-            
+
     def equivalence(self):
         print "Our DFA:"
         for i in range(len(self.dfa_main.delta)):
             print "accept: ", self.dfa_main.delta[i].accepting, " zero: ", self.dfa_main.delta[i].zero_tr, " one: ", self.dfa_main.delta[i].one_tr
-        
+
         while (len(self.List) != 0):
             current = self.List.pop(0)
             print "LEEST:", self.List
@@ -134,45 +138,48 @@ class UNION_FIND:
         print self.collection
 
 
-                                                                                                                                                                         
-        
+
+
 class LAZY:
     def __init__(self, dfa_file_1, dfa_file_2):
         self.dfa_1 = DFA(dfa_file_1)
         self.dfa_2 = DFA(dfa_file_2)
 
-    def exclusive(self):
-         equal = 1
-         processing_states = []
+	def exclusive(self):
+		start = time.time()
+    	equal = 1
+        processing_states = []
 
-         seen_states = [[0,0]]
-         current_1 = seen_states[0][0]
-         current_2 = seen_states[0][1]
-         processing_states.append(seen_states[0])
-         while(len(processing_states) > 0 ):
+        seen_states = [[0,0]]
+        current_1 = seen_states[0][0]
+        current_2 = seen_states[0][1]
+        processing_states.append(seen_states[0])
+        while(len(processing_states) > 0 ):
 
-             temp = processing_states.pop(0)
-             current_1 = temp[0]
-             current_2 = temp[1]
-             
-             if( self.dfa_1.delta[current_1].accepting != self.dfa_2.delta[current_2].accepting):
-                 equal = 0
-                 
-             state_on_zero = [self.dfa_1.delta[current_1].zero_tr, self.dfa_2.delta[current_2].zero_tr]
-             if (state_on_zero not in seen_states):
-                 seen_states.append(state_on_zero)
-                 processing_states.append(state_on_zero)
+        	temp = processing_states.pop(0)
+            current_1 = temp[0]
+			current_2 = temp[1]
 
-             state_on_one = [self.dfa_1.delta[current_1].one_tr, self.dfa_2.delta[current_2].one_tr]
-             if (state_on_one not in seen_states):
-                 seen_states.append(state_on_one)
-                 processing_states.append(state_on_one)
+            if( self.dfa_1.delta[current_1].accepting != self.dfa_2.delta[current_2].accepting):
+            	qual = 0
 
-         if (equal):
-             print "EEEQUIQUI"
-         else:
-             print "NARC"
-             
+            state_on_zero = [self.dfa_1.delta[current_1].zero_tr, self.dfa_2.delta[current_2].zero_tr]
+            if (state_on_zero not in seen_states):
+            	seen_states.append(state_on_zero)
+                processing_states.append(state_on_zero)
+
+            state_on_one = [self.dfa_1.delta[current_1].one_tr, self.dfa_2.delta[current_2].one_tr]
+            if (state_on_one not in seen_states):
+        		seen_states.append(state_on_one)
+                processing_states.append(state_on_one)
+
+			if (equal):
+            	print "EEEQUIQUI"
+			else:
+            	print "NARC"
+		 	end = time.time()
+			print(end - start)
+
 def main():
 
     DFA_1_FILE = raw_input("Please type the name of the file containing the first DFA: ")
@@ -180,7 +187,7 @@ def main():
 
     LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
     UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
-    
+
     prog_decision = 1
     while(prog_decision != -1):
         alg_decision = input("Enter 1 for lazy, 2 for union_find: ")
