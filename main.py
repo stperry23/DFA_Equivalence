@@ -13,28 +13,28 @@ import sys
 def lazy_exclusive(numsStates_a, numTrans_a, acceptStates_a, dfa_a, numsStates_b, numTrans_b, acceptStates_b, dfa_b):
     equal = 0
     states = [[0,0]]
+    all_states = [[0,0]]
     current = 0
     while(len(states) > 0 ):
-        if(accept_check(states[current][0],states[current][1], acceptStates_a, acceptStates_b) == False):
+        if(accept_check(new_states[current][0],new_states[current][1], acceptStates_a, acceptStates_b) == False):
             equal = 1
+            new_states = []
         for i in range(numTrans_a):
-            state = [dfa_a[states[current][0]][i],dfa_b[states[current][1]][i]]
+            state = [dfa_a[new_states[current][0]][i],dfa_b[new_states[current][1]][i]]
             if(state not in states):
                 new_states.append(state)
             states.append(state)
-            print(states)
+            print(new_states)
         new_states.pop(0)
         for i in range(numTrans_a-1):
-            if(accept_check(states[current][0],states[current][1], acceptStates_a, acceptStates_b) == False):
+            if(accept_check(new_states[current][0],new_states[current][1], acceptStates_a, acceptStates_b) == False):
                 equal = 1
-
+                new_states = []
 
     if(equal == 0):
         print("EQUIVALIANT")
     if(equal == 1):
         print("NOT EQUIVALIANT!!")
-
-
 
 
 
@@ -67,8 +67,8 @@ def dfa_parser(dfa):
 
 def main():
 
-    DFA_A = "DFA_1_1.txt"#input("DFA 1: ")
-    DFA_B = "DFA_1_2.txt"#input("DFA 2: ")
+    DFA_A = "DFA_2_1.txt"#input("DFA 1: ")
+    DFA_B = "DFA_2_2.txt"#input("DFA 2: ")
 
     numsStates_a, numTrans_a, acceptStates_a, dfa_a = dfa_parser(DFA_A)
     numsStates_b, numTrans_b, acceptStates_b, dfa_b = dfa_parser(DFA_B)
