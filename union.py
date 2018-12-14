@@ -51,12 +51,14 @@ class UNION_FIND:
         return self.find_parent(self.collection[i])
 
     def find_parent_compress(self, i):
-        if (self.collection[i] == -1):
+        if (self.collection[i] < 0):
             return i
         else:
             self.collection[i] = self.find_parent_compress(self.collection[i])
      
+
     def union(self,x,y):
+        print "x: ", x, " y: ", y
         self.collection[x] = y
 
     def union_by_height(self, x, y):
@@ -89,6 +91,7 @@ class UNION_FIND:
         for i in range(len(self.dfa_main.delta)):
             print "accept: ", self.dfa_main.delta[i].accepting, " zero: ", self.dfa_main.delta[i].zero_tr, " one: ", self.dfa_main.delta[i].one_tr
         while (len(self.List) != 0):
+            print self.collection
             current = self.List.pop(0)
             print "LEEST:", self.List
             A_1 = self.find_parent(current[0])
@@ -104,6 +107,7 @@ class UNION_FIND:
         for i in range(len(self.dfa_main.delta)):
             print "accept: ", self.dfa_main.delta[i].accepting, " zero: ", self.dfa_main.delta[i].zero_tr, " one: ", self.dfa_main.delta[i].one_tr
         while (len(self.List) != 0):
+            print self.collection
             current = self.List.pop(0)
             print "LEEST:", self.List
             A_1 = self.find_parent_compress(current[0])
@@ -170,9 +174,9 @@ class LAZY:
              print "NARC"
              
 def main():
-    '''
-    DFA_1_FILE = input("Please type the name of the file containing the first DFA: ")
-    DFA_2_FILE = input("Please type the name of the file containing the second DFA: ")
+
+    DFA_1_FILE = raw_input("Please type the name of the file containing the first DFA: ")
+    DFA_2_FILE = raw_input("Please type the name of the file containing the second DFA: ")
 
     LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
     UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
@@ -196,8 +200,8 @@ def main():
                 UNION_FIND_obj.equivalence()
         prog_decision = input("Enter -1 to quit, 1 to continue with same input, 0 to change input: ")
         if (prog_decision == 0):
-             DFA_1_FILE = input("Enter file 1: ")
-             DFA_2_FILE = input("Enter file 2: ")
+             DFA_1_FILE = raw_input("Enter file 1: ")
+             DFA_2_FILE = raw_input("Enter file 2: ")
              LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
              UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
     '''
@@ -208,5 +212,6 @@ def main():
     if (decision == 2):
         UNION_FIND_obj = UNION_FIND(sys.argv[1], sys.argv[2])
         UNION_FIND_obj.equivalence()
+    '''
 
 main()
