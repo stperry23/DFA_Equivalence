@@ -1,6 +1,7 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 from timeit import default_timer as timer
+from itertools import combinations
 import matplotlib.pyplot as plt
 import sys
 import os
@@ -17,18 +18,18 @@ class DFA:
         lines = file.read().splitlines()
         for i in range(len(lines)):
             lines[i] = list(map(int, lines[i].split()))
-            
+
         states = lines[1:]
         self.numStates = lines[0][0]
         self.numTrans = lines[0][1]
         acceptStates = lines[0][2:]
         self.delta = []
-        
+
         for i in range(self.numStates):
             current = state((i in acceptStates), states[i][0], states[i][1])
             self.insert_state(current)
 
-	    
+
     def insert_state(self, state):
 	self.delta.append(state)
 
@@ -39,7 +40,7 @@ class UNION_FIND:
         for i in range(len(self.dfa_other.delta)):
             self.dfa_other.delta[i].one_tr += self.dfa_main.numStates
             self.dfa_other.delta[i].zero_tr += self.dfa_main.numStates
-        
+
         self.other_start = self.dfa_main.numStates # will be index representing start of tacked on dfa
         for i in range(self.dfa_other.numStates):
             self.dfa_main.insert_state(self.dfa_other.delta[i])
@@ -47,8 +48,8 @@ class UNION_FIND:
         self.collection = [-1 for x in range(self.dfa_main.numStates)]
         self.List = []
         self.List.append([0, self.other_start])
-                 
-        
+
+
     # A utility function to find the subset of an element i
     def find_parent(self, i):
         if self.collection[i] == -1:
@@ -60,7 +61,7 @@ class UNION_FIND:
         self.collection[x] = y
 
     def equivalence(self):
-        
+
         while (len(self.List) != 0):
             current = self.List.pop(0)
             A_1 = self.find_parent(current[0])
@@ -90,10 +91,10 @@ class LAZY:
              temp = processing_states.pop(0)
              current_1 = temp[0]
              current_2 = temp[1]
-             
+
              if( self.dfa_1.delta[current_1].accepting != self.dfa_2.delta[current_2].accepting):
                  equal = 0
-                 
+
              state_on_zero = [self.dfa_1.delta[current_1].zero_tr, self.dfa_2.delta[current_2].zero_tr]
              if (state_on_zero not in seen_states):
                  seen_states.append(state_on_zero)
@@ -108,42 +109,27 @@ class LAZY:
              return "EQUIVALENT"
          else:
              return "NOT-EQUIVALENT"
-             
+
 def main():
 
     DFA_1 = []
     DFA_2 = []
     DFA_numStates = []
-    
-    DFA_1_1_FILE = "DFA_1_1.txt"
-    DFA_1_2_FILE = "DFA_1_2.txt"
-    temp_1 = DFA(DFA_1_1_FILE)
-    temp_2 = DFA(DFA_1_2_FILE)
-    
-    DFA_1.append(DFA_1_1_FILE)
-    DFA_2.append(DFA_1_2_FILE)
-    DFA_numStates.append(temp_1.numStates + temp_2.numStates)
 
-    DFA_2_1_FILE = "DFA_2_1.txt"
-    DFA_2_2_FILE = "DFA_2_2.txt"
-    temp_1 = DFA(DFA_2_1_FILE)
-    temp_2 = DFA(DFA_2_2_FILE)
+    combs = combinations([1, 2, 3, 4, 5, 6, 7, 8], 2)
+    # for i in list(combs):
+    #     print("i[0]= :"+str(i[1]))
 
-    DFA_1.append(DFA_2_1_FILE)
-    DFA_2.append(DFA_2_2_FILE)
-    DFA_numStates.append(temp_1.numStates + temp_2.numStates)
-    '''
-    DFA_3_1_FILE = "DFA_3_1.txt"
-    DFA_3_2_FILE = "DFA_3_2.txt"
-    temp_1 = DFA(DFA_3_1_FILE)
-    temp_2 = DFA(DFA_3_2_FILE)
+    for i in list(combs):
+        DFA_A = "DFA_"+ str(i[0]) +".txt"
+        DFA_B = "DFA_"+ str(i[1]) +".txt"
+        temp_1 = DFA(DFA_A)
+        temp_2 = DFA(DFA_B)
+        DFA_1.append(DFA_A)
+        DFA_2.append(DFA_B)
+        DFA_numStates.append(temp_1.numStates + temp_2.numStates)
 
-    DFA_1.append(DFA_3_1_FILE)
-    DFA_2.append(DFA_3_2_FILE)
-    DFA_numStates.append(temp_1.numStates + temp_2.numStates)
-    '''
-    
-    
+
     total_times_union = []
     total_times_lazy = []
     for i in range(len(DFA_1)):
@@ -181,18 +167,20 @@ def main():
         print "It took ", average, " seconds to run the Lazy Exclusive algorithm, finding the DFA pair: ", eq
 
     plt.scatter(DFA_numStates, total_times_union)
+    plt.ylim(0, .000002)
     plt.xlabel("Total Number of States in DFA Pair")
-    plt.ylabel("Time to perform Lazy Exclusive")
+    plt.ylabel("Time to perform Lazy Exclusive (sec)")
+
     plt.tight_layout()
-    imgname = os.path.splitext("lazy.png")
-    plt.savefig(imgname)
+    plt.show()
 
     plt.scatter(DFA_numStates, total_times_lazy)
+    plt.ylim(0, .00008)
     plt.xlabel("Total Number of States in DFA Pair")
-    plt.ylabel("Time to perform Union Find")
+    plt.ylabel("Time to perform Union Find (sec)")
     plt.tight_layout()
-    imgname = os.path.splitext("union.png")
-    plt.savefig(imgname)
+    plt.show()
+
 
     '''
     decision = input("Enter 1 for lazy, 2 for union_find: ")
