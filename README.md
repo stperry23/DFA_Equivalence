@@ -5,8 +5,8 @@ DFA file representation:
 
   M N A1 A2        M = Number of states  N = Number of labels
   [0,1]                   A = List of Accepting states
-  [2,3]                     
-  
+  [0,1]                     
+
 
 
 

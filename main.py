@@ -50,6 +50,7 @@ class UNION_FIND:
         #self.wit1 = ""
         #self.wit2 = ""
         self.wit_len = 0
+        self.e = 1
 
 
     # A utility function to find the subset of an element i
@@ -59,34 +60,38 @@ class UNION_FIND:
         return self.find_parent(self.collection[i])
 
     def union(self,x,y,l):
-        print "x: ", x, " y: ", y
+        #print "x: ", x, " y: ", y
         self.collection[x] = y
         self.witness += l
-        
+
 
     def equivalence(self):
-        print "Our DFA:"
-        for i in range(len(self.dfa_main.delta)):
-            print "accept: ", self.dfa_main.delta[i].accepting, " zero: ", self.dfa_main.delta[i].zero_tr, " one: ", self.dfa_main.delta[i].one_tr
+        #print "Our DFA:"
+
+        #for i in range(len(self.dfa_main.delta)):
+            #print "accept: ", self.dfa_main.delta[i].accepting, " zero: ", self.dfa_main.delta[i].zero_tr, " one: ", self.dfa_main.delta[i].one_tr
 
         while (len(self.List) != 0):
+            #print "LEEST:", self.List
             current = self.List.pop(0)
-            print "LEEST:", self.List
-            print("Collection: ", self.collection)
+            #print "LEEST:", self.List
+            #print("Collection: ", self.collection)
             A_1 = self.find_parent(current[0])
             A_2 = self.find_parent(current[1])
             if A_1 != A_2:
                 self.union(A_1, A_2, current[2])
                 self.List.append([self.dfa_main.delta[current[0]].zero_tr, self.dfa_main.delta[current[1]].zero_tr, "0"])
                 self.List.append([self.dfa_main.delta[current[0]].one_tr, self.dfa_main.delta[current[1]].one_tr, "1"])
-        print self.collection
+        #print self.collection
+        '''
         if(self.check_equ()):
-            print("The two DFA's are equivalent")
+            print("Yes, the two DFA's are equivalent")
         else:
-            print("The two DFA's are not equivalent, Here is the shortest witness accepted by one of them: ")
-            self.wit()
-            print(self.witness[1:self.wit_len+1])
-        
+            print("No, the two DFA's are not equivalent. Here is the shortest witness accepted by one of them: ")
+            #self.wit()
+            #print(self.witness[1:self.wit_len+1])
+        '''
+
     def wit(self):
         next_tran = []
         next_tran.append([0, self.other_start])
@@ -103,25 +108,35 @@ class UNION_FIND:
                 else:
                     next_tran.append([self.dfa_main.delta[temp[0]].one_tr, self.dfa_main.delta[temp[1]].one_tr])
                     self.wit_len += 1
-        
+
     def check_equ(self):
         for i in range(len(self.collection)):
-            print(i, " ", self.collection[i])
-            print(self.dfa_main.delta[i].accepting, " ", self.dfa_main.delta[self.collection[i]].accepting)
+            #print(i, " ", self.collection[i])
+            #print(self.dfa_main.delta[i].accepting, " ", self.dfa_main.delta[self.collection[i]].accepting)
             if(self.collection[i] == -1):
                 continue
             if (self.dfa_main.delta[i].accepting):
                 if(not(self.dfa_main.delta[self.collection[i]].accepting)):
+                    print("No, the two DFA's are not equivalent. This is the shortest witness: ")
+                    self.e = 1
+                    #self.wit()
+                    #print(self.witness[1:self.wit_len+1])
                     return False
             if (self.dfa_main.delta[self.collection[i]].accepting):
                 if(not(self.dfa_main.delta[i].accepting)):
+                    print("No, the two DFA's are not equivalent. This is the shortest witness: ")
+                    self.e = 1
+                    #self.wit()
+                    #print(self.witness[1:self.wit_len+1])
                     return False
-        return True
-    
+        #return True
+        print("Yes, the two DFA's are equivalent")
+        self.e = 0
 class LAZY:
     def __init__(self, dfa_file_1, dfa_file_2):
         self.dfa_1 = DFA(dfa_file_1)
         self.dfa_2 = DFA(dfa_file_2)
+        self.ee = 0
 
 	def exclusive(self):
 		start = time.time()
@@ -149,46 +164,49 @@ class LAZY:
             if (state_on_one not in seen_states):
                 seen_states.append(state_on_one)
                 processing_states.append(state_on_one)
-                
+
         if (equal):
-            print "EEEQUIQUI"
+            print "Yes, the two DFA's are equivalent"
         else:
-            print "NARC"
+            print "No, the two DFA's are not equivalent. Here is the shortest witness: "
+            self.ee = 1
         end = time.time()
         #print(end - start)
-        
-        
+
+
 def main():
 
     DFA_1_FILE = raw_input("Please type the name of the file containing the first DFA: ")
     DFA_2_FILE = raw_input("Please type the name of the file containing the second DFA: ")
 
-    LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
-    UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
+    #LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
+    #UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
 
     prog_decision = 1
     while(prog_decision != -1):
         alg_decision = input("Enter 1 for lazy, 2 for union_find: ")
         if (alg_decision == 1):
-            LAZY_obj.exclusive()
+            LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
+            if (LAZY_obj.ee == 1):
+                UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
+                UNION_FIND_obj.equivalence()
+                #UNION_FIND_obj.check_equ()
+                UNION_FIND_obj.wit()
+                print(UNION_FIND_obj.witness[1:UNION_FIND_obj.wit_len+1])
+            #LAZY_obj.exclusive()
         if (alg_decision == 2):
-            union_decision = input("Enter 1 for default Union_Find, 2 for Union by Height, 3 for Union with path compression, 4 for Union by Height with path compression: ")
-            if (union_decision == 1):
-                UNION_FIND_obj.equivalence()
-            elif (union_decision == 2):
-                UNION_FIND_obj.equivalence_height()
-            elif (union_decision == 3):
-                UNION_FIND_obj.equivalence_compress()
-            elif (union_decision == 4):
-                UNION_FIND_obj.equivalence_height_compress()
-            else:
-                UNION_FIND_obj.equivalence()
+            UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
+            UNION_FIND_obj.equivalence()
+            UNION_FIND_obj.check_equ()
+            if (UNION_FIND_obj.e == 1):
+                UNION_FIND_obj.wit()
+                print(UNION_FIND_obj.witness[1:UNION_FIND_obj.wit_len+1])
         prog_decision = input("Enter -1 to quit, 1 to continue with same input, 0 to change input: ")
         if (prog_decision == 0):
-             DFA_1_FILE = raw_input("Enter file 1: ")
-             DFA_2_FILE = raw_input("Enter file 2: ")
-             LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
-             UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
+            DFA_1_FILE = raw_input("Enter file 1: ")
+            DFA_2_FILE = raw_input("Enter file 2: ")
+            #LAZY_obj = LAZY(DFA_1_FILE, DFA_2_FILE)
+            #UNION_FIND_obj = UNION_FIND(DFA_1_FILE, DFA_2_FILE)
     '''
     decision = input("Enter 1 for lazy, 2 for union_find: ")
     if (decision == 1):
