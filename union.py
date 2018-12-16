@@ -1,3 +1,4 @@
+
 import sys
 import time
 
@@ -56,10 +57,10 @@ class UNION_FIND:
             return i
         else:
             self.collection[i] = self.find_parent_compress(self.collection[i])
-<<<<<<< HEAD
-     
-=======
->>>>>>> 7bf374cbf40722d8a099d305e7bf00a5a7b2452d
+# <<<<<<< HEAD
+#
+# =======
+# >>>>>>> 7bf374cbf40722d8a099d305e7bf00a5a7b2452d
 
     def union(self,x,y):
         print "x: ", x, " y: ", y

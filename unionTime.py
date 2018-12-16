@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from timeit import default_timer as timer
 from itertools import combinations
 import matplotlib.pyplot as plt
@@ -117,8 +115,6 @@ def main():
     DFA_numStates = []
 
     combs = combinations([1, 2, 3, 4, 5, 6, 7, 8], 2)
-    # for i in list(combs):
-    #     print("i[0]= :"+str(i[1]))
 
     for i in list(combs):
         DFA_A = "DFA_"+ str(i[0]) +".txt"
@@ -148,7 +144,6 @@ def main():
             sum += times[p]
         average = sum / 50
         total_times_union.append(average)
-        print "It took ", average, " seconds to run the Union_Find algorithm."
 
         LAZY_obj = LAZY(DFA_1[i], DFA_2[i])
         x = 0
@@ -167,7 +162,7 @@ def main():
         print "It took ", average, " seconds to run the Lazy Exclusive algorithm, finding the DFA pair: ", eq
 
     plt.scatter(DFA_numStates, total_times_union)
-    plt.ylim(0, .000002)
+    plt.ylim(0, .00008)
     plt.xlabel("Total Number of States in DFA Pair")
     plt.ylabel("Time to perform Lazy Exclusive (sec)")
 
